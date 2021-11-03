@@ -6,5 +6,22 @@
 
 export type User = {
   id: number
-  name: string
+  firstName: string
+  secondName: string
+  thirdName: string
+}
+
+export type CourseUser = {
+    id: number
+    user: User
+}
+
+export type CourseUsers = {
+    teachers?: CourseUser[]
+    students?: CourseUser[]
+}
+
+export type Course = {
+    courseName: string
+    courseUsers: CourseUsers
 }
