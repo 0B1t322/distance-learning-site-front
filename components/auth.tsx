@@ -9,7 +9,12 @@ import {
     Heading,
     Spacer,
     Box,
-    Text
+    Text,
+    Alert,
+    AlertIcon,
+    AlertDescription,
+    AlertTitle,
+    CloseButton
 } from '@chakra-ui/react'
 import {MdAccountCircle, MdLock} from 'react-icons/md'
 import {ViewIcon, ViewOffIcon} from '@chakra-ui/icons'
@@ -27,6 +32,8 @@ export const AuthForm = () => {
     const [loginEmpty, setLoginEmpty] = React.useState(false)
     const [pswEmpty, setPswEmpty] = React.useState(false)
     const isUserLogin = useSelector((state:AppStateType) => state.auth.isLogin)
+    const isLoginError = useSelector((state:AppStateType) => state.auth.isLoginError)
+
     const router = useRouter()
 
     const loginChange = (event: {target: HTMLInputElement}) => {
@@ -111,6 +118,36 @@ export const AuthForm = () => {
                                 </InputRightElement>
                             </InputGroup>
                         </Box>
+                        {
+                            isLoginError? (
+                                <Box 
+                                p={1} 
+                                maxW="inherit"
+                                >
+                                    <Alert 
+                                    status="error"
+                                    border="1px"
+                                    borderWidth="1px"
+                                    borderRadius="lg"
+                                    borderColor="gray.200"
+                                    >
+                                    <AlertIcon/>
+                                    <AlertTitle>
+                                        Ошибка
+                                    </AlertTitle>
+                                    <AlertDescription>
+                                        Неверный пароль или логин
+                                    </AlertDescription>
+                                    <CloseButton 
+                                    position="absolute" 
+                                    right="8px" 
+                                    top="8px"
+                                    onClick={()=>(dispatch(authActions.setLoginError(false)))}
+                                    />
+                                </Alert>
+                                </Box>
+                            ): (<></>)
+                        }
                         <Box pb={4}>
                             <Button 
                             bg="Highlight"

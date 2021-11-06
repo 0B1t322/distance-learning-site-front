@@ -34,16 +34,45 @@ export type TeacherType = {
     user: UserType
 }
 
+export type CourseTopicType = {
+    id:         number
+    name:       string
+    files?:     FileType[]
+}
+
+export type FileType = {
+    id:         number
+    name:       string
+    fileUrl:    string
+}
+
 export type GetCourseResponceType = {
-    id: number
+    id:             number
+    courseName:     string
+    courseUsers:    CourseUsersType
+    topics?:        CourseTopicType[]
+}
+
+type CreateCourseRequestType = {
     courseName: string
-    courseUsers: CourseUsersType
+}
+
+type CreateCourseResponceType = {
+    id: number
+}
+
+type UpdateCourseTopicReqType = {
+    name: string
+}
+
+type UpdateCourseReqType = {
+    name: string
 }
 
 export const courseAPI = {
     getCourses() {
         return axios.get<GetCoursesResponceType & ErrorResponceType>(
-            baseURL + '/api/site/v1/course',
+            baseURL + '/api/site/v1/course?forUser=true',
             {
                 headers: {
                     "Authorization": `${localStorage.getItem("accessToken")}`
@@ -59,6 +88,59 @@ export const courseAPI = {
                     "Authorization": `${localStorage.getItem("accessToken")}`
                 }
             }
+        ).then(responce => responce.data)
+    },
+    createCourse(req: CreateCourseRequestType) {
+        return axios.post<CreateCourseResponceType & ErrorResponceType>(
+            baseURL + `/api/site/v1/course`,
+            req,
+            {
+                headers: {
+                    "Authorization": `${localStorage.getItem("accessToken")}`,
+                },
+            },
+        ).then(responce => responce.data)
+    },
+    updateCourseTopic(id: number|string, req: UpdateCourseTopicReqType) {
+        return axios.put<ErrorResponceType>(
+            baseURL + `/api/site/v1/topic/` + id,
+            req,
+            {
+                headers: {
+                    "Authorization": `${localStorage.getItem("accessToken")}`,
+                },
+            },
+        ).then(responce => responce.data)
+    },
+    deleteCourseTopic(id: number | string) {
+        return axios.delete<ErrorResponceType>(
+            baseURL + `/api/site/v1/topic/` + id,
+            {
+                headers: {
+                    "Authorization": `${localStorage.getItem("accessToken")}`,
+                },
+            },
+        ).then(responce => responce.data)
+    },
+    updateCourse(id: number | string, req: UpdateCourseReqType) {
+        return axios.put<ErrorResponceType>(
+            baseURL + `/api/site/v1/course/` + id,
+            req,
+            {
+                headers: {
+                    "Authorization": `${localStorage.getItem("accessToken")}`,
+                },
+            },
+        ).then(responce => responce.data)
+    },
+    deleteCourse(id: number | string) {
+        return axios.delete<ErrorResponceType>(
+            baseURL + `/api/site/v1/course/` + id,
+            {
+                headers: {
+                    "Authorization": `${localStorage.getItem("accessToken")}`,
+                },
+            },
         ).then(responce => responce.data)
     }
 }

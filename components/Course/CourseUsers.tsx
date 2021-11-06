@@ -1,5 +1,5 @@
 
-import { Box, Heading, HStack, Text, VStack } from "@chakra-ui/react"
+import { Box, Heading, HStack, Text, VStack, Avatar } from "@chakra-ui/react"
 import {BiUserCircle} from 'react-icons/bi'
 
 export interface UserProps{
@@ -23,7 +23,7 @@ export const CourseUser = (props: CourseUserProps) => {
     return (
         <Box>
             <HStack spacing={2}>
-                <BiUserCircle size="40px"/>
+                <Avatar name={`${props.user.firstName} ${props.user.secondName}`}/>
                 <Text fontSize="sm" w="100px">
                     {`${props.user.firstName} ${props.user.secondName} ${props.user.thirdName}`}
                 </Text>

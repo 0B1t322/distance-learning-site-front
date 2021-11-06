@@ -1,15 +1,24 @@
 import { GetStaticPaths, GetStaticProps } from "next"
-import { Course } from "../../interfaces"
+import { Course, File } from "../../interfaces"
 import { courseAPI } from "../api/course"
-import {Text, Spinner, Box, Flex, Heading} from '@chakra-ui/react'
+import {Text, Spinner, Box, Flex, Heading, VStack, Accordion, HStack} from '@chakra-ui/react'
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { CourseUsers } from "../../components/Course/CourseUsers"
+import { CourseTopic } from "../../components/Course/CourseTopic"
+import { File as CourseFile } from "../../components/Course/File"
+import { WaitLoad } from "../../components/waitload"
+import { useSelector } from "react-redux"
+import { AppStateType } from "../redux/store"
+import { EditTopic } from "../../components/Course/EditTopic"
+import { EditCourse } from "../../components/Course/EditCourse"
 
 const CourseDetail = () => {
     const router = useRouter()
     const [course, setCourse] = useState<Course>(null)
     const [isLoading, setIsLoading] = useState(true)
+    
+    const isTeacher = useSelector((state:AppStateType) => state.auth.isTeacher)
 
     async function getCourse(id: string) {
         let data = await courseAPI.getCourse(id)
@@ -21,22 +30,20 @@ const CourseDetail = () => {
         () => {
             let id = router.query?.id
             console.log("id", id)
-            if (id !== undefined) {
+            if (id !== undefined && isLoading) {
                 console.log("real not undefined bro")
                 getCourse(String(id))
             }
-        },[router.query?.id])
+        },[router.query?.id, isLoading])
 
-    const WaitLoad = (
-        {children}
-    ) => {
-        if(isLoading) {
-            return (
-                <Spinner/>
-            )
-        } else {
-            return children
-        }
+    const RenderFiles = (file: File) => {
+        return (
+            <CourseFile 
+                id={file.id}
+                name={file.name}
+                fileUrl={file.fileUrl}
+            />
+        )
     }
 
     return (
@@ -51,18 +58,47 @@ const CourseDetail = () => {
                     w="full"
                 >
                     <Heading p={1} align="center">
-                        <WaitLoad>
-                            <Text>
-                                {course?.courseName}
-                            </Text>
+                        <WaitLoad isLoading={isLoading}>
+                            <Box>
+                            <HStack justifyContent="center">
+                                <Text>
+                                    {course?.courseName}
+                                </Text>
+                                <EditCourse
+                                    id={course?.id}
+                                    name={course?.courseName}
+                                    updater={setIsLoading}
+                                />
+                            </HStack>
+                            </Box>
                         </WaitLoad>
                     </Heading>
                     <Box alignItems="left">
-                        {/* <WaitLoad>
-                            <Text>
-                                {course?.courseName}
-                            </Text>
-                        </WaitLoad> */}
+                        <Accordion allowToggle allowMultiple defaultIndex={[0, 1]}>
+                        {
+                            course?.topics?.map(
+                                (topic) => (
+                                        <HStack w="full" align="flex-start">
+                                            <Box w="full">
+                                            <CourseTopic
+                                            id={topic.id}
+                                            name={topic.name}
+                                            >
+                                                <VStack align="left">
+                                                    {
+                                                        topic.files?.map(
+                                                            (file) => RenderFiles(file)
+                                                        )
+                                                    }
+                                                </VStack>
+                                            </CourseTopic>
+                                            </Box>
+                                            {isTeacher ? (<EditTopic id={topic.id} name={topic.name} updater={setIsLoading}/>) : (<></>)}
+                                        </HStack>
+                                )
+                            )
+                        }
+                        </Accordion>
                     </Box>
                 </Box>
                 <Box 
@@ -72,7 +108,7 @@ const CourseDetail = () => {
                 borderColor="gray.200"
                 p={2}
                 >
-                    <WaitLoad>
+                    <WaitLoad isLoading={isLoading}>
                         <CourseUsers 
                             teachers={course?.courseUsers.teachers} 
                             students={course?.courseUsers.students}

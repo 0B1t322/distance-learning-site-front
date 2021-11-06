@@ -9,7 +9,7 @@ export const CourseList = ({items}: CourseListProps) => {
    return (
         <Flex direction="row" flexWrap="wrap"  gridGap={5}>
             {
-                items.map(
+                items?.map(
                     (item) => {
                         return (
                             <Box>

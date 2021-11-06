@@ -4,6 +4,8 @@
 //
 // import { User } from 'path/to/interfaces';
 
+import { FileType } from "../pages/api/course"
+
 export type User = {
   id: number
   firstName: string
@@ -22,6 +24,20 @@ export type CourseUsers = {
 }
 
 export type Course = {
-    courseName: string
-    courseUsers: CourseUsers
+    id:             number
+    courseName:     string
+    courseUsers:    CourseUsers
+    topics?:         CourseTopic[]
+}
+
+export type File = {
+    id:         number
+    name:       string
+    fileUrl:    string
+}
+
+export type CourseTopic = {
+    id:         number
+    name:       string
+    files?:     FileType[]
 }

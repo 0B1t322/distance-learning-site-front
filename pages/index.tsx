@@ -7,6 +7,9 @@ import { useEffect, useState } from 'react'
 import { NewsItemProps } from '../components/News/NewsItem'
 import { NewsList } from '../components/News/NewsList'
 import { useRouter } from 'next/router'
+import {LocalizationProvider} from '@mui/lab'
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import StaticDatePicker from '@mui/lab/StaticDatePicker'
 const IndexPage = () => {
     const [news, setNews] = useState<NewsItemProps[]>(null)
     useEffect(
@@ -42,6 +45,8 @@ const IndexPage = () => {
                 </Box>
                 <Box>
                     <AuthForm/>
+                </Box>
+                <Box>
                 </Box>
             </Flex>
         </Box>
