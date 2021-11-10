@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react'
 
 import { Closer, EditModal } from "../EditModal/EditModal";
+import { courseAPI } from "../../pages/api/course";
 export interface CreateCourseTopicProps {
     courseID:   number
     updater:    Dispatch<SetStateAction<boolean>>
@@ -16,6 +17,7 @@ export const CreateCourseTopic = (props: CreateCourseTopicProps) => {
     const openBtn = ({onClick}) => {
         return (
             <Button
+            onClick={()=>{onClick()}}
             colorScheme="green"
             >
                 Создать топик
@@ -25,10 +27,35 @@ export const CreateCourseTopic = (props: CreateCourseTopicProps) => {
 
     const Footer = ({onClose}: Closer) => {
         return (
-            <Button>
+            <Button
+            onClick={()=>{makeCourseTopic(onClose)}}
+            >
                 Добавить
             </Button>
         )
+    }
+
+    const makeCourseTopic = (onClose: ()=>void) => {
+        async function createCourseTopic() {
+            let data = await courseAPI.createCourseTopic(
+                props.courseID,
+                {
+                    name: name,
+                },
+            )
+            if (data.status != 200) {
+                console.log(data.status)
+                console.log(data.message)
+            }
+        }
+        if (name != '') {
+            createCourseTopic().then(
+                () => {
+                    onClose()
+                    props.updater(true)
+                }
+            )
+        }
     }
 
     const NameInput = () => {
@@ -38,7 +65,7 @@ export const CreateCourseTopic = (props: CreateCourseTopicProps) => {
             onChange={
                 (event) => setName(event.target.value)
             }
-            placeholder="Новое имя курса"
+            placeholder="Имя топика"
             >
             </Input>
         )

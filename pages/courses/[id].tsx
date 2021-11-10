@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from "next"
 import { Course, File } from "../../interfaces"
 import { courseAPI } from "../api/course"
-import {Text, Spinner, Box, Flex, Heading, VStack, Accordion, HStack} from '@chakra-ui/react'
+import {Text, Spinner, Box, Flex, Heading, VStack, Accordion, HStack, Spacer} from '@chakra-ui/react'
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { CourseUsers } from "../../components/Course/CourseUsers"
@@ -12,17 +12,25 @@ import { useSelector } from "react-redux"
 import { AppStateType } from "../redux/store"
 import { EditTopic } from "../../components/Course/EditTopic"
 import { EditCourse } from "../../components/Course/EditCourse"
+import {EditFile} from '../../components/Files/EditFile'
 
 const CourseDetail = () => {
     const router = useRouter()
     const [course, setCourse] = useState<Course>(null)
     const [isLoading, setIsLoading] = useState(true)
-    
+    const [indexes, setIndexes] = useState([])
+
+
     const isTeacher = useSelector((state:AppStateType) => state.auth.isTeacher)
 
     async function getCourse(id: string) {
         let data = await courseAPI.getCourse(id)
         setCourse(data)
+        let newIndexes = []
+        for (let i = 0; i < data.topics?.length; i+=1) {
+            newIndexes.push(i)
+        }
+        setIndexes(newIndexes)
         setIsLoading(false)
     }
 
@@ -38,11 +46,20 @@ const CourseDetail = () => {
 
     const RenderFiles = (file: File) => {
         return (
-            <CourseFile 
+            <HStack>
+                <CourseFile 
                 id={file.id}
                 name={file.name}
                 fileUrl={file.fileUrl}
-            />
+                />
+                <Spacer/>
+                <EditFile
+                fileID={file.id}
+                name={file.name}
+                fileUrl={file.fileUrl}
+                updater={setIsLoading}
+                />
+            </HStack>
         )
     }
 
@@ -74,10 +91,12 @@ const CourseDetail = () => {
                         </WaitLoad>
                     </Heading>
                     <Box alignItems="left">
-                        <Accordion allowToggle allowMultiple defaultIndex={[0, 1]}>
+                        <Accordion allowToggle allowMultiple defaultIndex={indexes}>
                         {
                             course?.topics?.map(
-                                (topic) => (
+                                (topic, index) => {
+                                    indexes.push(index)
+                                    return (
                                         <HStack w="full" align="flex-start">
                                             <Box w="full">
                                             <CourseTopic
@@ -96,6 +115,7 @@ const CourseDetail = () => {
                                             {isTeacher ? (<EditTopic id={topic.id} name={topic.name} updater={setIsLoading}/>) : (<></>)}
                                         </HStack>
                                 )
+                                }
                             )
                         }
                         </Accordion>

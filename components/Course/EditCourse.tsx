@@ -23,6 +23,7 @@ export interface EditCourseProps {
 export const EditCourse = (props: EditCourseProps) => {
     const [name, setName] = useState('')
     const router = useRouter()
+
     const openBtn = ({onClick}) => {
         return (
             <IconButton
@@ -33,7 +34,7 @@ export const EditCourse = (props: EditCourseProps) => {
         )
     }
 
-    const InputNewName = () => {
+    const InputNewCourseName = () => {
         return (
             <Input
             value={name}
@@ -44,6 +45,10 @@ export const EditCourse = (props: EditCourseProps) => {
             >
             </Input>
         )
+    }
+
+    const Wrapper = ({onClose}: Closer) => {
+        return InputNewCourseName()
     }
 
     const Footer = ({onClose}: Closer) => {
@@ -121,9 +126,11 @@ export const EditCourse = (props: EditCourseProps) => {
         <EditModal
         size="6xl"
         openBtn={openBtn}
-        bodyChilds={InputNewName()}
+        bodyChilds={InputNewCourseName()}
         header={`Изменение курса ${props.name}`}
-        footerChilds={Footer}
+        footerChilds={
+            (onClose) => Footer(onClose)
+        }
         />
     )
 

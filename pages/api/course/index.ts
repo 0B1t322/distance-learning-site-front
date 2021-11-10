@@ -69,6 +69,15 @@ type UpdateCourseReqType = {
     name: string
 }
 
+type CreateCourseTopicReqType = {
+    name: string
+}
+
+type CreateFileReqType = {
+    name: string
+    file_url: string
+}
+
 export const courseAPI = {
     getCourses() {
         return axios.get<GetCoursesResponceType & ErrorResponceType>(
@@ -136,6 +145,38 @@ export const courseAPI = {
     deleteCourse(id: number | string) {
         return axios.delete<ErrorResponceType>(
             baseURL + `/api/site/v1/course/` + id,
+            {
+                headers: {
+                    "Authorization": `${localStorage.getItem("accessToken")}`,
+                },
+            },
+        ).then(responce => responce.data)
+    },
+    createCourseTopic(courseId: number | string, req: CreateCourseTopicReqType) {
+        return axios.post<ErrorResponceType>(
+            baseURL + `/api/site/v1/course/${courseId}/topic`,
+            req,
+            {
+                headers: {
+                    "Authorization": `${localStorage.getItem("accessToken")}`,
+                },
+            },
+        ).then(responce => responce.data)
+    },
+    createTopicFile(topicId: number | string, req: CreateFileReqType) {
+        return axios.post<ErrorResponceType>(
+            baseURL + `/api/site/v1/topic/${topicId}/file`,
+            req,
+            {
+                headers: {
+                    "Authorization": `${localStorage.getItem("accessToken")}`,
+                },
+            },
+        ).then(responce => responce.data)
+    },
+    deleteTopicFile(fileId: string | number) {
+        return axios.delete<ErrorResponceType>(
+            baseURL + `/api/site/v1/file/${fileId}`,
             {
                 headers: {
                     "Authorization": `${localStorage.getItem("accessToken")}`,

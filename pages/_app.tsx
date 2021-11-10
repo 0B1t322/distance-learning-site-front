@@ -12,6 +12,10 @@ import { PrivateRouter } from "./_protected_routers";
 
 import {PersistGate} from 'redux-persist/integration/react'
 
+// import css
+import '../components/Files/FileUploader.css'
+// 
+
 export default function App({Component, pageProps, router}: AppProps) {
     const protectedRouters = [
         '/about',

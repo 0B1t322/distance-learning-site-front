@@ -18,13 +18,17 @@ export interface OpenButton extends JSX.Element {
     }
 }
 
+type childsArgs = {
+    onClose
+}
+
 export interface EditModalProps {
     // some clickable node that will open modal
     openBtn: (onClick) => JSX.Element
 
     bodyChilds: JSX.Element
 
-    footerChilds: ({onClose}: Closer) => JSX.Element
+    footerChilds: ({onClose}?: Closer) => JSX.Element
 
     header: string
     size?: string

@@ -17,6 +17,8 @@ import {
     Closer,
 } from '../EditModal/EditModal'
 
+import CreateFile from '../Files/CreateFile'
+
 import { MouseEventHandler, useEffect } from 'react'
 import {Box, Input} from '@chakra-ui/react'
 import { courseAPI } from '../../pages/api/course'
@@ -76,6 +78,10 @@ export const EditTopic = (props: EditTopicProps) => {
                 >
                     Удалить топик
                 </Button>
+                <CreateFile
+                topicID={props.id}
+                updater={props.updater}
+                />
             </HStack>
         )
     }
@@ -111,18 +117,24 @@ export const EditTopic = (props: EditTopicProps) => {
                 console.log(data.message)
             }
         }
-        deleteTopic()
-        props.updater(true)
-        onClose()
+        deleteTopic().then(
+            () =>{
+                props.updater(true)
+                onClose()
+            }
+        )
     }
 
 
     return (
             <EditModal
+            size="xl"
             openBtn={openBtn}
             bodyChilds={InputNewName()}
             header={`Изменение топика ${props.name}`}
-            footerChilds={Footer}
+            footerChilds={
+                (onClose) => Footer(onClose)
+            }
             />
     )
 }
